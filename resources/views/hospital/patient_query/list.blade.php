@@ -2,6 +2,84 @@
 
 @section('seo_title', 'Login')
 
+@section('header_custom_css')
+
+<style>
+  /*
+	Max width before this PARTICULAR table gets nasty. This query will take effect for any screen smaller than 760px and also iPads specifically.
+	*/
+table {
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+td img{
+      width: 300px;
+    }
+	@media
+	  only screen 
+    and (max-width: 760px), (min-device-width: 768px) 
+    and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		table, thead, tbody, th, td, tr {
+			display: block;
+		}
+
+    td img{
+      width: 50px;
+    }
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+    tr {
+      margin: 0 0 1rem 0;
+    }
+      
+    tr:nth-child(odd) {
+      background: #ccc;
+    }
+    
+		td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+		}
+
+		td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 0;
+			left: 6px;
+			width: 45%;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+    You could also use a data-* attribute and content for this. That way "bloats" the HTML, this way means you need to keep HTML and CSS in sync. Lea Verou has a clever way to handle with text-shadow.
+		*/
+		td:nth-of-type(1):before { content: "Image"; }
+		td:nth-of-type(2):before { content: "Name"; }
+		td:nth-of-type(3):before { content: "Email"; }
+		td:nth-of-type(4):before { content: "Mobile"; }
+		td:nth-of-type(5):before { content: "Department"; }
+		td:nth-of-type(6):before { content: "Action"; }
+	}
+</style>
+
+@endsection
 
 
 @section('body_content')
@@ -16,38 +94,38 @@
                     <h4 class="card-title">Patient Queries</h4>
                     <!-- <p class="card-description"> Add class <code>.table-hover</code> -->
                     </p>
-                    <table class="table table-hover" id = "example">
-                      <thead>
-                        <tr>
+                    <table class="table table-hover" id = "example" role="table">
+                      <thead role="rowgroup">
+                        <tr role="row">
                           <!-- <th>Patient Id</th> -->
-                          <th>Image</th>
-                          <th>Name</th>
-                          <th>Email</th>
-                          <th>Mobile</th>
-                          <th>Message</th>
-                          <th>Department</th>
-                          <th>Admin Reply</th>
+                          <th role="columnheader">Image</th>
+                          <th role="columnheader">Name</th>
+                          <th role="columnheader">Email</th>
+                          <th role="columnheader">Mobile</th>
+                          <!-- <th>Message</th> -->
+                          <th role="columnheader">Department</th>
+                          <!-- <th>Admin Reply</th> -->
                           <!-- <th>Reply</th> -->
-                          <th>Action</th>
+                          <th role="columnheader">Action</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody role="rowgroup">
                         @foreach($query_list as $query)
-                        <tr>
+                        <tr role="row">
                           
-                          <td>
+                          <td role="cell">
                             @if($query->image)
-                              <img src="{{ asset('storage/' . $query->image) }}" alt="Uploaded Image" width="300">
+                              <img src="https://cubedigital.tech/storage/images/7pVHfsrLE70vFqhc2JRfoCfSh7ph9ZCCMSdXrCGw.jpg" alt="Uploaded Image">
                             @else
                               -
                             @endif
                           </td>
-                          <td>{{ ucfirst($query->name) }}</td>
-                          <td>{{ $query->email }}</td>
-                          <td>{{ $query->mobile }}</td>
-                          <td>{{ $query->message }} {{ $query->query_type_id }}</td>
-                          <td>
-                            <select class="form-select" name = "query_type_sel" class = "query_type_sel" style="width: 150px;" onchange="updateDepartment('{{$query->id}}',this)">
+                          <td role="cell">{{ ucfirst($query->name) }}</td>
+                          <td role="cell">{{ $query->email }}</td>
+                          <td role="cell">{{ $query->mobile }}</td>
+                          {{--<td>{{ $query->message }} {{ $query->query_type_id }}</td>--}}
+                          <td role="cell">
+                            <select class="form-select" name = "query_type_sel" class = "query_type_sel" onchange="updateDepartment('{{$query->id}}',this)">
                               <option value="">Please select</option>
                               @foreach($query_types as $types)
                               <option value="{{ $types['id'] }}" 
@@ -58,18 +136,18 @@
                               @endforeach
                             </select>
                           </td>
-                          <td>{{ !empty($query->message_reply_by_admin) ? $query->message_reply_by_admin : '-' }}</td>
+                          {{--<td>{{ !empty($query->message_reply_by_admin) ? $query->message_reply_by_admin : '-' }}</td>--}}
                           {{--
                           @if($query->is_reply == 'no')
-                          <td><label class="badge badge-danger">No</label></td>
+                          <td role="cell"><label class="badge badge-danger">No</label></td>
                           @else
-                          <td><label class="badge badge-success">Yes</label></td>
+                          <td role="cell"><label class="badge badge-success">Yes</label></td>
                           @endif
                           --}}
                           @if($query->is_reply == 'no')
-                          <td><label class="badge badge-danger give-reply" data-id = "{{ $query->id }}" data-mob = "{{ $query->mobile }}" data-msg = "{{$query->message}}">Pending</label></td>
+                          <td role="cell"><label class="badge badge-danger give-reply" data-id = "{{ $query->id }}" data-mob = "{{ $query->mobile }}" data-msg = "{{$query->message}}">Pending</label></td>
                           @else
-                          <td><label class="badge badge-success">Replied</label></td>
+                          <td role="cell"><label class="badge badge-success">Replied</label></td>
                           @endif
                         </tr>
                         @endforeach
@@ -271,5 +349,20 @@ function updateDepartment(feedback_id,el){
      });
 
 }
+
+
+// on change screen sise add and remove class
+  $(window).resize(() => {
+    if (window.matchMedia('(max-width: 767px)').matches) {
+      $('table').removeClass('table table-hover dataTable');
+    } else {
+      $('table').addClass('table table-hover dataTable');
+    }
+  })
+
+
+  
+
+
 </script>
 @endsection

@@ -2,7 +2,23 @@
 
 @section('seo_title', 'Login')
 
+@section('header_custom_css')
 
+<style>
+  /*
+	Max width before this PARTICULAR table gets nasty. This query will take effect for any screen smaller than 760px and also iPads specifically.
+	*/
+table {
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+	
+</style>
+
+@endsection
 
 @section('body_content')
 
